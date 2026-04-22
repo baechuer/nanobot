@@ -25,6 +25,18 @@ class TestToolHintKnownTools:
         assert "loop.py" in result
         assert "read " in result
 
+    def test_read_file_workspace_skill_path_logs_exact_skill(self):
+        result = _hint([
+            _tc("read_file", {"path": "/workspace/skills/data-analysis-with-anomaly-focus/SKILL.md"})
+        ])
+        assert result == "skill data-analysis-with-anomaly-focus"
+
+    def test_read_file_builtin_skill_path_logs_exact_skill(self):
+        result = _hint([
+            _tc("read_file", {"path": "/app/nanobot/skills/github/SKILL.md"})
+        ])
+        assert result == "skill github"
+
     def test_write_file_shows_path_not_content(self):
         result = _hint([_tc("write_file", {"path": "docs/api.md", "content": "# API Reference\n\nLong content..."})])
         assert result == "write docs/api.md"

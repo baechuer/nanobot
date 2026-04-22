@@ -2,7 +2,9 @@
 
 A comprehensive, code-grounded architecture audit of [nanobot](https://github.com/HKUDS/nanobot) — a lightweight personal AI assistant framework.
 
-> **Scope**: v0.1.4.post5 · Python 3.11+ · ~4,500 lines of core runtime code
+> **Historical scope**: Documents `00`-`12` were written against roughly `v0.1.4.post5`.
+> The repository has moved on substantially. Start with `13_current_runtime_refresh.md`
+> for the codebase shape in the current checkout (`v0.1.5` in this repo).
 
 ## What This Contains
 
@@ -21,10 +23,17 @@ A comprehensive, code-grounded architecture audit of [nanobot](https://github.co
 | [10_component_abstraction.md](10_component_abstraction.md) | Research-level component decomposition |
 | [11_design_critique.md](11_design_critique.md) | Strengths, weaknesses, trade-offs, refactor priorities |
 | [12_callgraph_hotspots.md](12_callgraph_hotspots.md) | Top functions/classes to read first |
+| [13_current_runtime_refresh.md](13_current_runtime_refresh.md) | Current-runtime architecture guide and mismatch audit for `v0.1.5` |
 
 ## Recommended Reading Order
 
-### For onboarding
+### For current onboarding
+1. `13_current_runtime_refresh.md` — What the current repo looks like now
+2. `00_overview.md` — Historical overview from the older runtime snapshot
+3. `01_repo_map.md` — Historical file map; still useful for orientation
+4. `03_agent_loop.md` — Historical deep dive into the loop concepts
+
+### For historical context
 1. `00_overview.md` — Architecture mental model
 2. `01_repo_map.md` — What's where
 3. `03_agent_loop.md` — The central runtime

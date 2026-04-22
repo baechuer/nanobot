@@ -26,6 +26,8 @@ _PATH_IN_CMD_RE = re.compile(
     r"|(?P<bare>(?:[A-Za-z]:[/\\]|~/|(?<=\s)/)[^\s;&|<>\"']+)"
 )
 
+_SKILL_PATH_RE = re.compile(r"(?:^|/)(?:skills|nanobot/skills)/(?P<skill>[^/\s]+)/SKILL\.md$")
+
 
 def format_tool_hints(tool_calls: list) -> str:
     """Format tool calls as concise hints with smart abbreviation."""
@@ -85,11 +87,24 @@ def _fmt_known(tc, fmt: tuple) -> str:
     val = _extract_arg(tc, fmt[0])
     if val is None:
         return tc.name
+    if tc.name == "read_file":
+        skill_name = _extract_skill_name(val)
+        if skill_name:
+            return f"skill {skill_name}"
     if fmt[2]:  # is_path
         val = abbreviate_path(val)
     elif fmt[3]:  # is_command
         val = _abbreviate_command(val)
     return fmt[1].format(val)
+
+
+def _extract_skill_name(path: str) -> str | None:
+    """Return the exact skill name when a read targets a SKILL.md file."""
+    normalized = path.replace("\\", "/")
+    match = _SKILL_PATH_RE.search(normalized)
+    if not match:
+        return None
+    return match.group("skill")
 
 
 def _abbreviate_command(cmd: str, max_len: int = 40) -> str:

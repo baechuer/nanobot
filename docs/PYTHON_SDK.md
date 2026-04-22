@@ -1,6 +1,7 @@
 # Python SDK
 
-> **Note:** This interface is currently an experiment in the latest source code version and is planned to officially ship in `v0.1.5`.
+> **Status:** This shipped in `v0.1.5`. The API is still lightweight, and a few
+> return fields are currently reserved for future expansion.
 
 Use nanobot programmatically — load config, run the agent, get results.
 
@@ -52,8 +53,8 @@ await bot.run("hi", session_key="user-bob")
 | Field | Type | Description |
 |-------|------|-------------|
 | `content` | `str` | The agent's final text response. |
-| `tools_used` | `list[str]` | Tool names invoked during the run. |
-| `messages` | `list[dict]` | Raw message history (for debugging). |
+| `tools_used` | `list[str]` | Reserved field. Present today, but currently returned as an empty list by the facade. |
+| `messages` | `list[dict]` | Reserved field. Present today, but currently returned as an empty list by the facade. |
 
 ## Hooks
 
@@ -65,9 +66,9 @@ Subclass `AgentHook` and override any method:
 |--------|------|
 | `before_iteration(ctx)` | Before each LLM call |
 | `on_stream(ctx, delta)` | On each streamed token |
-| `on_stream_end(ctx)` | When streaming finishes |
+| `on_stream_end(ctx, *, resuming)` | When streaming finishes for the current segment |
 | `before_execute_tools(ctx)` | Before tool execution (inspect `ctx.tool_calls`) |
-| `after_iteration(ctx, response)` | After each LLM response |
+| `after_iteration(ctx)` | After each LLM response / tool iteration |
 | `finalize_content(ctx, content)` | Transform final output text |
 
 ### Example: Audit Hook
@@ -119,11 +120,11 @@ from nanobot.agent import AgentHook, AgentHookContext
 class TimingHook(AgentHook):
     async def before_iteration(self, ctx: AgentHookContext) -> None:
         import time
-        ctx.metadata["_t0"] = time.time()
+        self._t0 = time.time()
 
-    async def after_iteration(self, ctx, response) -> None:
+    async def after_iteration(self, ctx) -> None:
         import time
-        elapsed = time.time() - ctx.metadata.get("_t0", 0)
+        elapsed = time.time() - getattr(self, "_t0", 0)
         print(f"[timing] iteration took {elapsed:.2f}s")
 
 async def main():
